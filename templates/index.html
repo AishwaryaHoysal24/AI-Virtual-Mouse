@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Virtual Mouse</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            font-style: italic;
+            font-weight: 300;
+            font-display: initial;
+            font-size: larger;
+            text-align: center;
+            background-color: #000000;
+            color: antiquewhite;
+            font-stretch: ultra-expanded;
+            margin: 10px 5px;
+        }
+
+        html, body {
+            height: 100%;
+            overflow:visible;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h4 {
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        #container {
+            margin: 10px 3px;
+            /* Add position relative to container */
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #start-button {
+            /* Increased padding and font size */
+            padding: 25px 50px;
+            font-size: 28px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px; /* Increased border radius */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            /* Position the button absolutely within the container */
+            position: absolute;
+            /* Center the button horizontally */
+            left: 50%;
+            transform: translateX(-50%);
+            /* Position the button near the bottom of the image */
+            bottom: 40px; /* Increased bottom margin */
+            /* Ensure the button appears on top of the image */
+            z-index: 10;
+            /* Add min-width for larger button */
+            min-width: 200px;
+        }
+
+        #start-button:hover {
+            background-color: #45a049;
+        }
+
+        #start-button.near {
+            background-color: #FFA500;
+        }
+
+        #start-button:active {
+            background-color: #FF4500;
+            transform: translateX(-50%) scale(0.95);
+        }
+        
+        img {
+            width: 100%;
+            height: 100%;
+            background-image: url(static\image.png);
+            background-size: 100% 100%;
+            border-spacing: 0;
+            background-attachment: fixed;
+            border: 1px solid black;
+            /* Ensure the image is positioned relative to its container */
+            position: relative;
+            z-index: 1;
+            object-fit: contain;
+            margin-bottom:0%;
+            margin-right: 0%;
+            margin-left: 0%;
+            margin-top: initial;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>AI Virtual Mouse</h1>
+        <br>
+        <h4>Your Hand, Your Command</h4>
+        <img src="{{ url_for('static', filename='image.png') }}" alt="AI Virtual Mouse" width="640">
+        <!-- Move the button inside the container, after the image -->
+        <button id="start-button">START</button>
+    </div>
+
+    <script>
+        const button = document.getElementById("start-button");
+
+        button.addEventListener("mousemove", function(event) {
+            const rect = button.getBoundingClientRect();
+            const distance = Math.sqrt(
+                Math.pow(event.clientX - (rect.left + rect.width / 2), 2) +
+                Math.pow(event.clientY - (rect.top + rect.height / 2), 2)
+            );
+
+            if (distance < 100) {
+                button.classList.add("near");
+            } else {
+                button.classList.remove("near");
+            }
+        });
+
+        button.addEventListener("mouseout", function() {
+            button.classList.remove("near");
+        });
+
+        button.addEventListener("click", function() {
+            fetch('/start')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
